@@ -1,5 +1,6 @@
 {
   "name": "angular-openlayers-directive",
+  "version": "0.0.1",
   "author": "David Rubert <a@a.com>",
   "contributors": [
     "Juri Strumpflohner <juri.strumpflohner@gmail.com>"
