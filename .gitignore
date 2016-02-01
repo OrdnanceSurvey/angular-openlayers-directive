@@ -2,7 +2,7 @@ lib
 temp
 node_modules/
 bower_components/
-dist/
+#dist/
 libpeerconnection.log
 *.swp
 .*.swp
