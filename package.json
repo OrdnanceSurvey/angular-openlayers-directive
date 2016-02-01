@@ -5,10 +5,10 @@
     "Juri Strumpflohner <juri.strumpflohner@gmail.com>"
   ],
   "description": "angular-openlayers-directive - An AngularJS directive to easily interact with Openlayers maps",
-  "homepage": "http://tombatossals.github.io/angular-openlayers-directive/",
+  "homepage": "http://OrdnanceSurvey.github.io/angular-openlayers-directive/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tombatossals/angular-openlayers-directive"
+    "url": "https://github.com/OrdnanceSurvey/angular-openlayers-directive"
   },
   "keywords": [
     "angularjs",
