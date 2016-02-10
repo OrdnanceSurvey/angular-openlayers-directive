@@ -1329,6 +1329,7 @@ angular.module('openlayers-directive').factory('olHelpers', function($q, $log, $
                 case 'JSONP':
                 case 'TopoJSON':
                 case 'KML':
+                case 'VectorBBOX':
                 case 'TileVector':
                     return 'Vector';
                 default:
@@ -1364,6 +1365,28 @@ angular.module('openlayers-directive').factory('olHelpers', function($q, $log, $
     var isValidStamenLayer = function(layer) {
         return ['watercolor', 'terrain', 'toner'].indexOf(layer) !== -1;
     };
+
+    // options is an object with the properties:
+    // type (string) tile|bbox|all - default is all
+    // tileSize (number) tileSize is used only if type is set to tile.  Default is 256
+    function createLoadingStrategy(options) {
+        if (options && options.type) {
+            if (options.type === 'tile') {
+                return ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
+                        tileSize: options.tileSize || 512
+                    }));
+            }
+            if (options.type === 'bbox') {
+                return ol.loadingstrategy.bbox;
+            }
+            if (options.type === 'all') {
+                return ol.loadingstrategy.all;
+            }
+        }
+
+        // default
+        return ol.loadingstrategy.all;
+    }
 
     var createSource = function(source, projection) {
         var oSource;
@@ -1574,6 +1597,31 @@ angular.module('openlayers-directive').factory('olHelpers', function($q, $log, $
                         projection: projection
                     });
                 }
+                break;
+            case 'VectorBBOX':
+                if (!source.loader && (!(source.url && source.format))) {
+                    if (!source.loader) {
+                        $log.error('[AngularJS - Openlayers] - You need a loader function properly configured to add ' +
+                            'a VectorBBOX layer.');
+                        return;
+                    }
+                    if (!(source.url && source.format)) {
+                        $log.error('[AngularJS - Openlayers] - You need a to define both url and format if not ' +
+                            'using a loader function.');
+                        return;
+                    }
+                }
+
+                oSource = new ol.source.Vector({
+                    url: source.url,
+                    format: source.format,
+                    loader: function(extent, resolution, projection) {
+                        // call the provided loader with oSource as the first argument
+                        // need to add oSource so the provided loader can add features itself
+                        source.loader.call(this, oSource, extent, resolution, projection);
+                    },
+                    strategy: createLoadingStrategy(source.strategy)
+                });
                 break;
             case 'TopoJSON':
                 if (!(source.topojson || source.url)) {
